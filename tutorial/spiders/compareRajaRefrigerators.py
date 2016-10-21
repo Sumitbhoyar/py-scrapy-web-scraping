@@ -53,7 +53,21 @@ class AuthorSpider(scrapy.Spider):
         def extract_with_css(query):
             return response.css(query).extract_first().strip()
 
+        productDetails = self.getProductDetails(response)
+        link = extract_with_css('div.mer-box1 a::attr(href)')
+        id = link[link.rfind('/')+1:]
         yield {
-            'link': extract_with_css('div.mer-box1 a::attr(href)'),
+
+            'id': id,
+            'name':extract_with_css('div.exthead h1.exth1::text'),
             'url': extract_with_css('div.mer-box1 a::attr(onclick)'),
+            'details': str(productDetails),
+            'image_urls': response.css('a.simpleLens-thumbnail-wrapper img::attr(src)').extract(),
         }
+
+    def getProductDetails(self, response):
+        productDetails = {}
+        for details in response.css('ul.nexmob-lst-nw li'):
+            values = details.css('::text').extract()
+            productDetails[str(values[0])] = str(values[1]).replace(': ', "")
+        return productDetails
