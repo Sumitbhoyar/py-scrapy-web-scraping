@@ -55,46 +55,38 @@ class AuthorSpider(scrapy.Spider):
 
         stores = self.getStores(response)
         productDetails = self.getProductDetails(response)
-        link = extract_with_css('div.mer-box1 a::attr(href)')
-        id = link[link.rfind('/')+1:]
         yield {
-
-            'id': id,
             'name':extract_with_css('div.exthead h1.exth1::text'),
-            'url': extract_with_css('div.mer-box1 a::attr(onclick)'),
+            'link': extract_with_css('div.mer-box1 a::attr(onclick)'),
             'stores': str(stores),
             'productDetails': str(productDetails),
             'image_urls': response.css('a.simpleLens-thumbnail-wrapper img::attr(src)').extract(),
         }
 
     def getProductDetails(self, response):
-        productDetails = {}
-        for details in response.css('ul.fedet'):
-            for attr in details.css('li'):
 
+        detailsHeader=None
+        productDetailsSection={}
+        for details in response.css('ul.fedet'):
+            productDetails = {}
+            for attr in details.css('li'):
                 key = attr.css('p::text').extract_first()
                 if key is None:
+                    detailsHeader = attr.css('::text').extract_first().encode('utf-8').strip()
                     continue
                 value = attr.css('span::text').extract_first()
 
-                print("---------------------" + key)
-                print("---------------------" + value)
                 productDetails[key.encode('utf-8').strip()] = value.encode('utf-8').strip()
-        return productDetails
+            productDetailsSection[detailsHeader]=productDetails
+        return productDetailsSection
 
     def getStores(self, response):
-        stores = {}
-        cssStore = response.css('div.Prices')
+        stores = []
 
-        prices = cssStore.css('li.cp-c5 span::text').extract()
-        urls = cssStore.css('li.cp-c6 a::attr(onclick)').extract()
+        urls = response.css('div.Prices').css('li.cp-c6 a::attr(onclick)').extract()
 
         for count in range(len(urls)):
-            aStore = {}
             url = str(urls[count])
-            aStore['price'] = str(prices[count*2+1])
-            aStore['url'] = url
-            url = url[url.find('//')+2:]
-            url = url[:url.find('/')]
-            stores[url] = aStore
+            url = url[url.find('(') + 2:]
+            stores.append(url)
         return stores
