@@ -2,18 +2,17 @@ import scrapy
 
 
 class AuthorSpider(scrapy.Spider):
-    name = 'crRefrigerator'
+    name = 'mysmartprice'
 
     start_urls = [
-        'https://www.compareraja.in/filter/controlls/commonfinderext.aspx?page=2&categoryId=10&CategoryNameInURLs=refrigerators&catid=10&catname=refrigerators',
+    'http://www.mysmartprice.com/fashion/filters/filter_get_redesign?subcategory=casual-shirts-clothing-men&start=24&rows=2'
     ]
 
     def parse(self, response):
         # follow links to author pages
-        for product in response.css('article.product'):
-            yield scrapy.Request(response.urljoin(product.css('a::attr(href)').extract_first()),
+        for product in response.css('div.prdct-item'):
+            yield scrapy.Request('http://www.mysmartprice.com'+response.urljoin(product.css('a.prdct-item__img-wrpr::attr(href)').extract_first()),
                                   callback=self.parse_productDetails)
-            break
 
         # follow pagination links
         # next_page = response.css('article.load-more a::attr(href)').extract_first()
@@ -53,21 +52,12 @@ class AuthorSpider(scrapy.Spider):
         return productDetailsSection
 
     def getStores(self, response):
-        stores = {}
+        stores = []
 
-        pricesDiv = response.css('div.Prices')
+        urls = response.css('div.Prices').css('li.cp-c6 a::attr(onclick)').extract()
 
-        priceElements = pricesDiv.css('ul.nemcomp-price-row-nw')
-        print('-----------------22--' + str(len(priceElements)))
-        for count in range(len(priceElements)):
-            store={}
-            element = priceElements[count]
-            url = element.css('li.cp-c6 a::attr(onclick)').extract_first()
-            # url = str(urls[count])
-            rating = element.css('li.cp-c2 img::attr(src)').extract_first()
+        for count in range(len(urls)):
+            url = str(urls[count])
             url = url[url.find('(') + 2:]
-            url = url[:url.find("'")]
-            store['url']=url.encode('utf-8').strip()
-            store['rating']=rating.encode('utf-8').strip()
-            stores['store']=store
+            stores.append(url)
         return stores
