@@ -3,38 +3,34 @@ from scrapy import Request
 
 
 class AuthorSpider(scrapy.Spider):
-    name = 'crRefrigerator'
-
+    name = 'freeze'
+    counter=1
+    url ='https://www.compareraja.in/filter/controlls/commonfinderext.aspx?page=%d&&Type=&Blower/Fan=&minPrice=2300&maxPrice=58000&categoryId=53&CategoryNameInURLs=air-coolers&p_csv_Filter_01_Ids=&p_csv_Filter_02_Ids=&p_csv_Filter_03_Ids=&p_csv_Filter_04_Ids=&p_csv_Filter_05_Ids=&catid=53&catname=air-coolers'
     start_urls = [
-        'https://www.compareraja.in/filter/controlls/commonfinderext.aspx?page=1&categoryId=10&CategoryNameInURLs=refrigerators&catid=10&catname=refrigerators',
+        'https://www.compareraja.in/filter/controlls/commonfinderext.aspx?page=1&&Type=&Blower/Fan=&minPrice=2300&maxPrice=58000&categoryId=53&CategoryNameInURLs=air-coolers&p_csv_Filter_01_Ids=&p_csv_Filter_02_Ids=&p_csv_Filter_03_Ids=&p_csv_Filter_04_Ids=&p_csv_Filter_05_Ids=&catid=53&catname=air-coolers',
     ]
 
-    def start_reqests(self):
-        print ('calling ..........................................')
-        yield Request('http://checkip.dyndns.org/', callback=self.check_ip)
-        # yield other requests from start_urls here if needed
-
-    def check_ip(self, response):
-        print(str(response))
-
-
     def parse(self, response):
-        print('`````````````````````````````````````')
-        self.start_reqests()
-        print('`````````````````````````````````````')
+        self.counter += 1
         # follow links to author pages
-        for product in response.css('article.product'):
+        products = response.css('article.product')
+        print('calling 1')
+        if len(products) == 0:
+            print('its final ')
+            return
+        for product in products:
+            print('called')
             yield scrapy.Request(response.urljoin(product.css('a::attr(href)').extract_first()),
                                   callback=self.parse_productDetails)
-            break
+
 
         # follow pagination links
-        # next_page = response.css('article.load-more a::attr(href)').extract_first()
-        # if next_page is not None:
-        #     next_page = response.urljoin(next_page)
-        #     yield scrapy.Request(next_page, callback=self.parse)
+        next_page = self.url % self.counter
+        print('next page=' + str(next_page))
+        yield scrapy.Request(next_page, callback=self.parse)
 
     def parse_productDetails(self, response):
+        return
         def extract_with_css(query):
             return response.css(query).extract_first().strip()
 
