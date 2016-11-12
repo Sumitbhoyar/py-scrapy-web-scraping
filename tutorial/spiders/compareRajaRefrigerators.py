@@ -31,13 +31,16 @@ class AuthorSpider(scrapy.Spider):
         stores = self.getStores(response)
         productDetails = self.getProductDetails(response)
         reviews = self.getReviews(response)
+        imageurl = response.css('a.simpleLens-thumbnail-wrapper img::attr(src)').extract()
+        if len(imageurl) == 0:
+            imageurl = response.css('p.nsml img::attr(src)').extract()
         yield {
             'name':extract_with_css('div.exthead h1.exth1::text'),
             'link': extract_with_css('div.mer-box1 a::attr(onclick)'),
             'stores': str(stores),
             'reviews': reviews,
             'productDetails': str(productDetails),
-            'image_urls': response.css('a.simpleLens-thumbnail-wrapper img::attr(src)').extract(),
+            'image_urls': imageurl,
             'price': self.price,
         }
 
