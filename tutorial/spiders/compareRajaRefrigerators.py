@@ -3,9 +3,9 @@ import scrapy
 class AuthorSpider(scrapy.Spider):
     name = 'freeze'
     counter=1
-    url ='https://www.compareraja.in/filter/controlls/commonfinderext.aspx?page=%d&&Type=&Blower/Fan=&minPrice=2300&maxPrice=58000&categoryId=53&CategoryNameInURLs=air-coolers&p_csv_Filter_01_Ids=&p_csv_Filter_02_Ids=&p_csv_Filter_03_Ids=&p_csv_Filter_04_Ids=&p_csv_Filter_05_Ids=&catid=53&catname=air-coolers'
+    urld ='https://www.compareraja.in/filter/controlls/commonfinderext.aspx?page=%d&categoryId=10&CategoryNameInURLs=refrigerators&catid=10&catname=refrigerators',
     start_urls = [
-        'https://www.compareraja.in/filter/controlls/commonfinderext.aspx?page=1&&Type=&Blower/Fan=&minPrice=2300&maxPrice=58000&categoryId=53&CategoryNameInURLs=air-coolers&p_csv_Filter_01_Ids=&p_csv_Filter_02_Ids=&p_csv_Filter_03_Ids=&p_csv_Filter_04_Ids=&p_csv_Filter_05_Ids=&catid=53&catname=air-coolers',
+        'https://www.compareraja.in/filter/controlls/commonfinderext.aspx?page=1&categoryId=10&CategoryNameInURLs=refrigerators&catid=10&catname=refrigerators',
     ]
     price = 0
     def parse(self, response):
@@ -21,8 +21,8 @@ class AuthorSpider(scrapy.Spider):
             yield scrapy.Request(response.urljoin(product.css('a::attr(href)').
                     extract_first()), callback=self.parse_productDetails)
         # follow pagination links
-        next_page = self.url % self.counter
-        yield scrapy.Request(next_page, callback=self.parse)
+        # next_page = self.urld % self.counter
+        # yield scrapy.Request(next_page, callback=self.parse)
 
     def parse_productDetails(self, response):
         def extract_with_css(query):
