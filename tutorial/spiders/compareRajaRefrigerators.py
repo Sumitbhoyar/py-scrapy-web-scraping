@@ -3,11 +3,11 @@ import scrapy
 class AuthorSpider(scrapy.Spider):
     name = 'freeze'
     counter=1
-    urld ='https://www.compareraja.in/filter/controlls/commonfinderext.aspx?page=%d&categoryId=10&CategoryNameInURLs=refrigerators&catid=10&catname=refrigerators',
+    urld ='https://www.compareraja.in/filter/controlls/commonfinderext.aspx?page=%d&categoryId=10&CategoryNameInURLs=refrigerators&catid=10&catname=refrigerators'
     start_urls = [
         'https://www.compareraja.in/filter/controlls/commonfinderext.aspx?page=1&categoryId=10&CategoryNameInURLs=refrigerators&catid=10&catname=refrigerators',
     ]
-    price = 0
+    # price = 0
     def parse(self, response):
         self.counter += 1
 
@@ -17,16 +17,27 @@ class AuthorSpider(scrapy.Spider):
             print('its final link')
             return
         for product in products:
-            self.price = product.css('b::text').extract_first().encode('utf-8').strip()
+            price = 0
+            priceCss = product.css('b::text').extract_first()
+            if priceCss is None:
+                price = None
+            else:
+                price = priceCss.encode('utf-8').strip()
             yield scrapy.Request(response.urljoin(product.css('a::attr(href)').
-                    extract_first()), callback=self.parse_productDetails)
+                    extract_first()), callback=self.parse_productDetails, meta={'price': price})
         # follow pagination links
         # next_page = self.urld % self.counter
         # yield scrapy.Request(next_page, callback=self.parse)
 
     def parse_productDetails(self, response):
         def extract_with_css(query):
-            return response.css(query).extract_first().strip()
+            productDetailsCss = response.css(query).extract_first()
+            if productDetailsCss is None:
+                return None
+            else:
+                return productDetailsCss.strip()
+
+        price = response.meta.get('price')
 
         stores = self.getStores(response)
         productDetails = self.getProductDetails(response)
@@ -41,7 +52,7 @@ class AuthorSpider(scrapy.Spider):
             'reviews': reviews,
             'productDetails': str(productDetails),
             'image_urls': imageurl,
-            'price': self.price,
+            'price': price,
         }
 
     def getProductDetails(self, response):
