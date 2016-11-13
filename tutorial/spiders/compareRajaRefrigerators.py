@@ -26,8 +26,8 @@ class AuthorSpider(scrapy.Spider):
             yield scrapy.Request(response.urljoin(product.css('a::attr(href)').
                     extract_first()), callback=self.parse_productDetails, meta={'price': price})
         # follow pagination links
-        # next_page = self.urld % self.counter
-        # yield scrapy.Request(next_page, callback=self.parse)
+        next_page = self.urld % self.counter
+        yield scrapy.Request(next_page, callback=self.parse)
 
     def parse_productDetails(self, response):
         def extract_with_css(query):
