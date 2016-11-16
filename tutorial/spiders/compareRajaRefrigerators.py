@@ -3,10 +3,14 @@ import scrapy
 class AuthorSpider(scrapy.Spider):
     name = 'freeze'
     counter=1
-    urld ='https://www.compareraja.in/filter/controlls/commonfinderext.aspx?page=%d&categoryId=10&CategoryNameInURLs=refrigerators&catid=10&catname=refrigerators'
-    start_urls = [
-        'https://www.compareraja.in/filter/controlls/commonfinderext.aspx?page=1&categoryId=10&CategoryNameInURLs=refrigerators&catid=10&catname=refrigerators',
-    ]
+    urld =''
+
+    def __init__(self, domain=None, category=""):
+        self.allowed_domains = ['compareraja.in']
+        self.urld = 'https://www.compareraja.in/filter/controlls/commonfinderext.aspx?page=%d&catid='+category
+        self.start_urls = [
+            self.urld % 1,
+        ]
     # price = 0
     def parse(self, response):
         self.counter += 1
@@ -25,6 +29,7 @@ class AuthorSpider(scrapy.Spider):
                 price = priceCss.encode('utf-8').strip()
             yield scrapy.Request(response.urljoin(product.css('a::attr(href)').
                     extract_first()), callback=self.parse_productDetails, meta={'price': price})
+            # break
         # follow pagination links
         next_page = self.urld % self.counter
         yield scrapy.Request(next_page, callback=self.parse)
