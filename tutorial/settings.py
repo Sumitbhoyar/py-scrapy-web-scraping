@@ -65,7 +65,7 @@ ROBOTSTXT_OBEY = True
 # Configure item pipelines
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {'scrapy.pipelines.images.ImagesPipeline': 1}
-IMAGES_STORE = '/home/sumit/work/py/tutorial/tutorial/images'
+IMAGES_STORE = 'data/mobiles/images'
 IMAGES_URLS_FIELD ='image_urls'
 
 # Enable and configure the AutoThrottle extension (disabled by default)
@@ -106,7 +106,7 @@ RETRY_HTTP_CODES = [500, 503, 504, 400, 403, 404, 408]
 # http://username:password@host2:port
 # http://host3:port
 # ...
-PROXY_LIST = '/home/sumit/study/workspaces/py/py-scrapy-web-scraping/tutorial/middlewares/proxy-list.txt'
+PROXY_LIST = 'tutorial/middlewares/proxy-list.txt'
 
 # Proxy mode
 # 0 = Every requests have different proxy
