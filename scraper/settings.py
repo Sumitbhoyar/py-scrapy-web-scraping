@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Scrapy settings for tutorial project
+# Scrapy settings for scraper project
 #
 # For simplicity, this file contains only settings considered important or
 # commonly used. You can find more settings consulting the documentation:
@@ -9,14 +9,14 @@
 #     http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
 #     http://scrapy.readthedocs.org/en/latest/topics/spider-middleware.html
 
-BOT_NAME = 'tutorial'
+BOT_NAME = 'scraper'
 
-SPIDER_MODULES = ['tutorial.spiders']
-NEWSPIDER_MODULE = 'tutorial.spiders'
+SPIDER_MODULES = ['scraper.spiders']
+NEWSPIDER_MODULE = 'scraper.spiders'
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-#USER_AGENT = 'tutorial (+http://www.yourdomain.com)'
+#USER_AGENT = 'scraper (+http://www.yourdomain.com)'
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
@@ -47,13 +47,13 @@ ROBOTSTXT_OBEY = True
 # Enable or disable spider middlewares
 # See http://scrapy.readthedocs.org/en/latest/topics/spider-middleware.html
 #SPIDER_MIDDLEWARES = {
-#    'tutorial.middlewares.MyCustomSpiderMiddleware': 543,
+#    'scraper.middlewares.MyCustomSpiderMiddleware': 543,
 #}
 
 # Enable or disable downloader middlewares
 # See http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
 #DOWNLOADER_MIDDLEWARES = {
-#    'tutorial.middlewares.MyCustomDownloaderMiddleware': 543,
+#    'scraper.middlewares.MyCustomDownloaderMiddleware': 543,
 #}
 
 # Enable or disable extensions
@@ -97,7 +97,7 @@ RETRY_HTTP_CODES = [500, 503, 504, 400, 403, 404, 408]
 
 # DOWNLOADER_MIDDLEWARES = {
 #     'scrapy.downloadermiddlewares.retry.RetryMiddleware': 90,
-#     'tutorial.middlewares.ProxyMiddleware.RandomProxy': 100,
+#     'scraper.middlewares.ProxyMiddleware.RandomProxy': 100,
 #     'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': 110,
 # }
 
@@ -106,7 +106,7 @@ RETRY_HTTP_CODES = [500, 503, 504, 400, 403, 404, 408]
 # http://username:password@host2:port
 # http://host3:port
 # ...
-PROXY_LIST = 'tutorial/middlewares/proxy-list.txt'
+PROXY_LIST = 'scraper/middlewares/proxy-list.txt'
 
 # Proxy mode
 # 0 = Every requests have different proxy
