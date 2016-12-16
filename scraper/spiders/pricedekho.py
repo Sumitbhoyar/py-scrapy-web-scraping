@@ -1,6 +1,6 @@
 import scrapy
 
-class AuthorSpider(scrapy.Spider):
+class PriceDekhoSpider(scrapy.Spider):
     name = 'pricedekho'
     counter=1
     urld =''
@@ -63,17 +63,14 @@ class AuthorSpider(scrapy.Spider):
 
         detailsHeader=None
         productDetailsSection={}
-        for details in response.css('ul.fedet'):
+        for props in response.css('#specification_section > div > div.category_detail > div > dl > dd > div > div > ul > li'):
+            prop = props.css('li > span')
             productDetails = {}
-            for attr in details.css('li'):
-                key = attr.css('p::text').extract_first()
-                if key is None:
-                    detailsHeader = attr.css('::text').extract_first().encode('utf-8').strip()
-                    continue
-                value = attr.css('span::text').extract_first()
+            prop_key = prop[0].css('::text').extract_first().encode('utf-8')
+            prop_value = prop[1].css('::text').extract_first().encode('utf-8')
 
-                productDetails[key.encode('utf-8').strip()] = value.encode('utf-8').strip()
-            productDetailsSection[detailsHeader]=productDetails
+            productDetails[prop_key] = prop_value
+            productDetailsSection[detailsHeader] = productDetails
         return productDetailsSection
 
     def getStores(self, response):
